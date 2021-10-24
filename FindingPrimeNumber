@@ -1,0 +1,65 @@
+#include <iostream>
+#include <iomanip>					//for static cast, manipulating number
+#include <cmath>					  //for floor function
+
+using namespace std;
+int main()
+{
+	cout << "\tThis program checks if a number is prime or not.\n\tLAB: Is Prime Number\n"
+		 << "\tCourse: CIT 120-T1\n\tProgrammer: Mohan Karki\n"
+		 << "\tLast Modified Date: 10/22/21\n\n\n\n";
+
+	int i;
+	double number;												//variable 'i' as divisor to find Prime number
+	 	
+	do															      //loop starts here
+	{
+		cout << "  Enter a number to check prime number: ";
+
+		while (!(cin >> number))								 //if number is not entered, print below
+		{
+			cout << setw(8) << " " << "No character, enter a number: ";
+			cin >> number;
+			cin.clear();										      //to clear previous entry
+			cin.ignore(100, '\n');								//to discard previous entry
+		}
+		while (number <= 0)										  //if number is less than or equal to zero, print below
+		{
+			cout << setw(8) << " " << "Enter a positive integer: ";
+			cin >> number;
+			cin.clear();
+			cin.ignore(100, '\n');
+		}
+		while (number != floor(number))							//floor function to detect decimal value, if decimal value entered print below
+		{
+			cout << setw(8) << " " << "No decimal value, enter whole number: ";
+			cin >> number;
+			cin.clear();
+			cin.ignore(100, '\n');
+		}														
+		bool isPrime = true;								/*bool for Prime number, basically this line says "all number are prime(true)
+															we are making false in some cases below because obviously all number are NOT prime.*/
+		for (i = 2; i < number; i++)						//for loop to find prime number
+		{
+			if (int(number) % i == 0)							//while number divided by two remains zero, prime value declares false
+			{
+				isPrime = false;
+				break;
+			}
+		}
+		if (isPrime)										      //if prime is true, print below
+		{
+			cout << setw(8) << " " << "The number is Prime\n\n";
+		}
+		else												          //if prime is not true, print below
+		{
+			cout << setw(8) << " " << "The number is NOT Prime\n\n";
+		}
+		
+		cout << setw(8) << " " << "Hit ENTER to check another number: ";	 												
+		cin.get();											      //cin.get gets the if user hits Enter
+	} 
+	while (cin.get());										  //loop ends here, this loop keep running as long as while user hits Enter.
+	
+	return 0;
+}
