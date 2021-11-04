@@ -1,0 +1,118 @@
+//This program calculates the bank balance
+//Programmer: Mohan Karki
+//Date: 11/02/2021
+
+#include <iostream>
+#include <fstream>						//including 'fstream' header file for ofstream and ifstream to create, write, open and read the file.
+#include <iomanip>						//including 'iomanip' header file to use "setprecision, fixed and setw" manipulators 
+
+using namespace std;
+int main()
+{
+	cout << "\n\tDescription : This program calculates the bank Account Balance\n\tProgrammer : Mohan Karki\n\tProject : Balance Check\n\tLast Modified : 11/03/2021\n"; // header
+	cout << "" << endl;
+
+	const int MONTHS = 12;
+	int ageofAC;
+	double openingBL, amountDeposit, amountWithdr,							//these variables are created to store the starting balance, deposited and withdrawal amount for every month 
+		     interestEarned, monthlyIR, annualIR, totalInterestEarned = 0,	//these variables are created to store the Interest Rate and amount of Interest earned. Banks pays the interest for positive balance in bank account;
+		     closingBL, totalDeposit = 0, totalWithdr = 0;					//these variables are created to store the total ending balance, total deposit amount and total withdrawal from every month
+
+	cout << "\tIn order to calculate the balance of your account,\n\tPlease provide the information below.\n\n\n";
+
+	cout << setw(4) << " " << "Please enter the number of months since the account was open: ";
+	cin >> ageofAC;
+	while (cin.fail() || ageofAC <= 0)						//input validation for character and age of account 
+	{
+		cout << "\n" << setw(4) << " " << "Please enter a number of Months: ";
+		cin.clear();										//clearing the Error flag
+		cin.ignore(100, '\n');								//clearing the buffer
+		cin >> ageofAC;										//new input stored
+	}
+
+	cout << "\n" << setw(4) << " " << "Please enter the Opening Balance: $";
+	cin >> openingBL;
+	while (cin.fail() || openingBL < 0)						    //input validation for character and if Starting balance is less than zero.
+	{
+		cout << "\n" << setw(4) << " " << "Please enter the Opening Balance in number: $";
+		cin.clear();
+		cin.ignore(100, '\n');
+		cin >> openingBL;
+	}
+	closingBL = openingBL;										//at this point opening balance is saved in closing(ending) balance, closingBL is an accumulator.
+
+	cout << "\n" << setw(4) << " " << "Please enter the Annual Interest Rate(APR): ";
+	cin >> annualIR;
+	while (cin.fail() || annualIR <= 0)							//input validation for character and if annual interest rate is zero or less than zero.
+	{
+		cout << "\n" << setw(4) << " " << "Please enter the Annual Interest Rate in number: ";
+		cin.clear();
+		cin.ignore(100, '\n');
+		cin >> annualIR;
+	}
+	monthlyIR = annualIR / MONTHS;								//monthly Interest Rate is 'Annual Interest Rate divided by 12 (Months)
+
+	ofstream outfile;											//writes the file
+	ifstream infile;											//reads the file
+
+	outfile.open("balance.txt");								//creates and opens the file
+	for (int i = 0; i < ageofAC; i++)							//'i' is a counter here, 'i' increments every time till it reaches to age of account.
+	{
+		cout << setprecision(2) << fixed << "\n";				//using setprecision with fixed to display two points after decimal 
+		cout << setw(4) << " " << "Please enter the Amount DEPOSITED in Month " << (i + 1) << ": $"; //here (i + 1) helps to count every month till it reaches to age of account.
+		cin >> amountDeposit;
+		while (cin.fail() || amountDeposit < 0)				    //input validation for character and if the amount is less than zero
+		{
+			cout << "\n" << setw(4) << " " << "Please enter the DEPOSITED Amount in number " << (i + 1) << ": $"; //here again, asking to re-enter the value for every month if user enters wrong value.
+			cin.clear();
+			cin.ignore(100, '\n');
+			cin >> amountDeposit;
+		}	
+		outfile << amountDeposit << endl;												 //amount of monthly deposit is written to the file.
+		totalDeposit += amountDeposit;													 //amount of monthly deposit is added to total deposit.
+		outfile << totalDeposit << endl;												 //amount of total deposit is written to the file.
+		closingBL += amountDeposit;														 //amount of monthly deposit is also added to closing(ending) balance.
+
+		cout << setw(4) << " " << "Please enter the Amount WITHDRAWN in Month " << (i + 1) << ": $";   //here again (i + 1) helps to count every month till it reaches to age of account.
+		cin >> amountWithdr;
+		while (cin.fail() || amountWithdr < 0)
+		{
+			cout << "\n" << setw(4) << " " << "Please enter the WITHDRAWN Amount in number " << (i + 1) << ": $";  //here again, asking to re-enter the value for every month if user enters wrong value.
+			cin.clear();
+			cin.ignore(100, '\n');
+			cin >> amountWithdr;
+		}
+		outfile << amountWithdr << endl;												//amount of monthly withdrawn is written to the file.
+		totalWithdr += amountWithdr;													//amount of monthly withdrawn is added to total withdrawn.
+		outfile << totalWithdr << endl;													//amount of total withdrawn is written to the file.
+		closingBL -= amountWithdr;														//amount of monthly withdrawn is deducted from ending balance.
+
+		if (closingBL < 0)																//if the closing(ending) balance is less than zero, loop ends
+		{
+			cout << "\n" << setw(4) << " " << "Due to negative balance, your Account has been closed\n\n\n";
+			break;														//using loop control statement 'break' to terminate the loop if the condition is true.
+		}
+
+		interestEarned = monthlyIR * closingBL;							//monthly Interest Rate is multiply by closing balance and saved to interestEarned variable.
+		outfile << interestEarned << endl;								//the interest earned through the months is written to the file.
+		totalInterestEarned += interestEarned;							//also, interest earned through the months is added to total interest earned.
+		outfile << totalInterestEarned << endl;							//the total interest earned is written to the file.
+		closingBL += interestEarned;									//the interest earned through the months is added to the ending balance.
+		outfile << closingBL << endl;
+
+		cin.get();														//applying cin member function inside the loop to pause the screen,
+	} //for loop ends
+	outfile.close(); //close the file
+
+	infile.open("balance.txt");											//opening the file to read
+
+	cout << "\n\n" << setw(4) << " " << "Your total DEPOSIT: $" << totalDeposit << "\n";
+	cout << setw(4) << " " << "Your total WITHDRAWN: $" << totalWithdr << "\n";
+	cout << setw(4) << " " << "Total Interest amount you've earned: $" << totalInterestEarned << "\n\n";
+	cout << setw(4) << " " << "Your Ending Balance is: $" << closingBL << "\n\n\n";
+
+	infile.close();														//closing the file
+
+	cin.get();															//applying cin member function to pause the screen
+	return 0;
+}
